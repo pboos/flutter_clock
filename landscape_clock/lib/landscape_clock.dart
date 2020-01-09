@@ -9,7 +9,6 @@ import 'dart:ui';
 import 'package:landscape_clock/fake_time_updater.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clock_helper/model.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import 'model/DayPositions.dart';
@@ -208,12 +207,18 @@ class _LandscapeClockState extends State<LandscapeClock>
 //    final defaultStyle = GoogleFonts.skranji( // nice looking but positions jump
 //    final defaultStyle = GoogleFonts.robotoCondensed( // positions = ok, but not so ncie
 //    final defaultStyle = GoogleFonts.titilliumWeb( // positions = ok, but not so ncie
-    final defaultStyle = GoogleFonts.changaOne(
-      textStyle: TextStyle(
-        color: colors[_Element.text],
-      ),
-//      fontWeight: FontWeight.bold,
+//    final defaultStyle = GoogleFonts.changaOne(
+//      textStyle: TextStyle(
+//        color: colors[_Element.text],
+//      ),
+////      fontWeight: FontWeight.bold,
+//      fontSize: fontSize,
+//    );
+
+    final defaultStyle = TextStyle(
+      fontFamily: "ChangaOne-Regular",
       fontSize: fontSize,
+      color: colors[_Element.text],
     );
 
     return Positioned.fill(

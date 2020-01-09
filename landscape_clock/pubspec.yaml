@@ -11,7 +11,7 @@ dependencies:
   flutter_clock_helper:
     path: ../flutter_clock_helper
   cupertino_icons: ^0.1.2
-  google_fonts: ^0.2.0
+#  google_fonts: ^0.2.0
   tinycolor: ^1.0.2
 
 dev_dependencies:
@@ -24,7 +24,7 @@ flutter:
     - assets/landscape1/
     - assets/sun.png
     - assets/moon.png
-#  fonts:
-#    - family: PressStart2P
-#      fonts:
-#        - asset: third_party/PressStart2P-Regular.ttf
+  fonts:
+    - family: ChangaOne-Regular
+      fonts:
+        - asset: third_party/ChangaOne-Regular.ttf
