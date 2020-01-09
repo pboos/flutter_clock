@@ -20,7 +20,7 @@ enum _Element {
   shadow,
 }
 
-final _landscape = Landscape1;
+final _landscape = Landscape2;
 
 final _lightTheme = {
   _Element.text: Colors.white54,
@@ -131,8 +131,10 @@ class _LandscapeClockState extends State<LandscapeClock>
         _buildSkyBackground(),
         _buildStars(constraints),
         _buildSunMoon(constraints),
-        _buildLandscape(),
+        // TODO weather layer might need to be in front of landscape for
+        //      rain, storm, snow, ...?
         _buildWeather(),
+        _buildLandscape(),
         _buildTime(),
         _buildBottomBar(),
       ]);
@@ -143,7 +145,7 @@ class _LandscapeClockState extends State<LandscapeClock>
     final darkeningPercentage = _dayPositions.getSkyDarkeningPercentage();
     return Positioned.fill(
       child: Image(
-        image: AssetImage('assets/landscape1/background.png'),
+        image: AssetImage('assets/${_landscape.background}'),
         fit: BoxFit.cover,
         color: _getDarkenModulateColor(darkeningPercentage),
         colorBlendMode: BlendMode.modulate,
@@ -201,7 +203,7 @@ class _LandscapeClockState extends State<LandscapeClock>
     final darkeningPercentage = _dayPositions.getLandscapeDarkeningPercentage();
     return Positioned.fill(
       child: Image(
-        image: AssetImage('assets/landscape1/clouds.png'),
+        image: AssetImage('assets/landscape2/clouds.png'),
         fit: BoxFit.cover,
         color: _getDarkenModulateColor(darkeningPercentage),
         colorBlendMode: BlendMode.modulate,

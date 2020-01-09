@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:flutter/widgets.dart';
 
 class Landscape {
   // imageLayers
@@ -10,13 +10,23 @@ class Landscape {
   // horizon: 0.5 (% from bottom)
 
   final String landscape;
+  final String background;
   final double horizon;
 
-  final Color colorSkyDay;
-
-  const Landscape(this.landscape, this.horizon, {this.colorSkyDay});
+  const Landscape({
+    @required this.landscape,
+    @required this.background,
+    @required this.horizon,
+  });
 }
 
-const Landscape1 = const Landscape("landscape1/landscape.png", 0.25, colorSkyDay: Color(0xFFDC9424));
-const Landscape2 = const Landscape("landscape2.png", 0.25);
-const Landscape3 = const Landscape("landscape3.png", 0.25);
+const Landscape1 = const Landscape(
+  landscape: "landscape1/landscape.png",
+  background: "landscape1/background.png",
+  horizon: 0.25,
+);
+const Landscape2 = const Landscape(
+  landscape: "landscape2/landscape.png",
+  background: "landscape2/background.png",
+  horizon: 0.5,
+);
