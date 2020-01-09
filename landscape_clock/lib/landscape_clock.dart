@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 
 import 'model/DayPositions.dart';
 import 'model/Landscape.dart';
+import 'model/Star.dart';
 
 enum _Element {
   background,
@@ -49,9 +50,12 @@ class LandscapeClock extends StatefulWidget {
 
 class _LandscapeClockState extends State<LandscapeClock>
     with SingleTickerProviderStateMixin {
+  BoxConstraints _constraints;
+
   DateTime _dateTime = DateTime.now();
   DayPositions _dayPositions;
   SunMoonPath _sunMoonPath = SunMoonPath();
+  List<Star> _stars = List();
   Timer _timer;
 
   FakeTimeUpdater _timeUpdater;
@@ -99,6 +103,7 @@ class _LandscapeClockState extends State<LandscapeClock>
     setState(() {
       _dateTime = DateTime.now();
       _dateTime = _timeUpdater.dateTime; // DateTime.now();
+//      _dateTime = DateTime(2020, 1, 1, 4, 10, 0, 0, 0);
       _dayPositions = DayPositions(_dateTime);
       // Update once per minute. If you want to update every second, use the
       // following code.
@@ -121,20 +126,80 @@ class _LandscapeClockState extends State<LandscapeClock>
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
+      if (_constraints == null ||
+          _constraints.maxWidth != constraints.maxWidth ||
+          _constraints.maxHeight != constraints.maxHeight) {
+        _constraints = constraints;
+        _updateStars(constraints);
+        _sunMoonPath.update(constraints);
+      }
+
       return Stack(children: <Widget>[
         _buildSkyBackground(),
+        _buildStars(constraints),
         _buildSunMoon(constraints),
-        Positioned.fill(
-          child: Image(
-            image: AssetImage('assets/${_landscape.landscape}'),
-            fit: BoxFit.cover,
-            color: Colors.grey,
-            colorBlendMode: BlendMode.modulate,
-          ),
-        ),
+        _buildLandscape(),
         _buildTime(),
       ]);
     });
+  }
+
+  Positioned _buildSkyBackground() {
+    final darkeningPercentage = _dayPositions.getSkyDarkeningPercentage();
+    return Positioned.fill(
+      child: Image(
+        image: AssetImage('assets/landscape1/landscape1_background.png'),
+        fit: BoxFit.cover,
+        color: _getDarkenModulateColor(darkeningPercentage),
+        colorBlendMode: BlendMode.modulate,
+      ),
+    );
+  }
+
+  Widget _buildStars(BoxConstraints constraints) {
+    if (_dayPositions.getSkyDarkeningPercentage() == 0) return Container();
+
+    final rotation =
+        (_dateTime.hour * 60 + _dateTime.minute) / (24 * 60) * Math.pi * 2;
+
+    return Positioned.fill(
+      child: Opacity(
+        opacity: _dayPositions.getSkyDarkeningPercentage(),
+        child: CustomPaint(
+          painter: StarsPainter(_stars, rotation),
+        ),
+      ),
+    );
+  }
+
+  Positioned _buildSunMoon(BoxConstraints constraints) {
+    final showSun = _dayPositions.isDaylight;
+    final sunMoonOffset = showSun
+        ? _sunMoonPath.getProgressOffset(_dayPositions.sunPosition)
+        : _sunMoonPath.getProgressOffset(_dayPositions.moonPosition);
+
+    // TODO first and last few percent (maybe like 2-3) fade the sun alpha
+
+    return Positioned(
+      child: Image.asset(
+        showSun ? "assets/sun.png" : "assets/moon.png",
+        height: _sunMoonPath.sunMoonSize,
+      ),
+      left: sunMoonOffset.dx,
+      top: sunMoonOffset.dy,
+    );
+  }
+
+  Positioned _buildLandscape() {
+    final darkeningPercentage = _dayPositions.getLandscapeDarkeningPercentage();
+    return Positioned.fill(
+      child: Image(
+        image: AssetImage('assets/${_landscape.landscape}'),
+        fit: BoxFit.cover,
+        color: _getDarkenModulateColor(darkeningPercentage),
+        colorBlendMode: BlendMode.modulate,
+      ),
+    );
   }
 
   Widget _buildTime() {
@@ -142,7 +207,7 @@ class _LandscapeClockState extends State<LandscapeClock>
         ? _lightTheme
         : _darkTheme;
     final hour =
-        DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
+    DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
     final fontSize = MediaQuery.of(context).size.width / 4;
 
@@ -192,36 +257,26 @@ class _LandscapeClockState extends State<LandscapeClock>
     );
   }
 
-  Positioned _buildSkyBackground() {
-    final darkeningPercentage = _dayPositions.getSkyDarkeningPercentage();
-    return Positioned.fill(
-      child: Image(
-        image: AssetImage('assets/landscape1/landscape1_background.png'),
-        fit: BoxFit.cover,
-        color: _getDarkenModulateColor(darkeningPercentage),
-        colorBlendMode: BlendMode.modulate,
-      ),
+  void _updateStars(BoxConstraints constraints) {
+    _stars.clear();
+
+    // size = diagonal because we rotate the stars
+    final size = Math.sqrt(
+      Math.pow(Math.max(constraints.maxWidth, constraints.maxHeight), 2) +
+          Math.pow(Math.min(constraints.maxWidth, constraints.maxHeight), 2),
     );
-  }
 
-  Positioned _buildSunMoon(BoxConstraints constraints) {
-    _sunMoonPath.update(constraints);
-
-    final showSun = _dayPositions.isDaylight;
-    final sunMoonOffset = showSun
-        ? _sunMoonPath.getProgressOffset(_dayPositions.sunPosition)
-        : _sunMoonPath.getProgressOffset(_dayPositions.moonPosition);
-
-    // TODO first and last few percent (maybe like 2-3) fade the sun alpha
-
-    return Positioned(
-      child: Image.asset(
-        showSun ? "assets/sun.png" : "assets/moon.png",
-        height: _sunMoonPath.sunMoonSize,
-      ),
-      left: sunMoonOffset.dx,
-      top: sunMoonOffset.dy,
-    );
+    final random = Math.Random();
+    for (int i = 0; i < 200; i++) {
+      _stars.add(Star(
+        position: Offset(
+          random.nextDouble() * size,
+          random.nextDouble() * size,
+        ),
+        size: random.nextDouble() * 2,
+        brightness: random.nextDouble(),
+      ));
+    }
   }
 
   Color _getDarkenModulateColor(double darkeningPercentage) =>
@@ -261,5 +316,45 @@ class SunMoonPath {
         .getTangentForOffset(progress * _pathMetrics.length)
         .position
         .translate(-_sunMoonSize / 2, -_sunMoonSize / 3);
+  }
+}
+
+class StarsPainter extends CustomPainter {
+  final List<Star> stars;
+  final double rotation;
+
+  StarsPainter(this.stars, this.rotation);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.white;
+    stars.forEach((star) => canvas.drawCircle(
+          rotate(
+              star.position, Offset(size.width / 2, size.height / 2), rotation),
+          star.size,
+          paint
+            ..color = Color.lerp(
+              Colors.transparent,
+              Colors.white,
+              star.brightness,
+            ),
+        ));
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
+  }
+
+  Offset rotate(Offset position, Offset origin, double rotationRadians) {
+    final cos = Math.cos(rotationRadians);
+    final sin = Math.sin(rotationRadians);
+
+    final positionTranslated = position.translate(-origin.dx, -origin.dy);
+
+    return Offset(
+      positionTranslated.dx * cos - positionTranslated.dy * sin + origin.dx,
+      positionTranslated.dx * sin + positionTranslated.dy * cos + origin.dy,
+    );
   }
 }
