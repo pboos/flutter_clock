@@ -17,7 +17,6 @@ import 'model/Landscape.dart';
 import 'model/Star.dart';
 
 enum _Element {
-  background,
   text,
   shadow,
 }
@@ -25,15 +24,13 @@ enum _Element {
 final _landscape = Landscape1;
 
 final _lightTheme = {
-  _Element.background: Color(0xFF81B3FE),
-  _Element.text: Colors.white,
-  _Element.shadow: Colors.black,
+  _Element.text: Colors.white54,
+  _Element.shadow: Colors.black87,
 };
 
 final _darkTheme = {
-  _Element.background: Colors.black,
-  _Element.text: Colors.white,
-  _Element.shadow: Color(0xFF174EA6),
+  _Element.text: Colors.black45,
+  _Element.shadow: Colors.white70,
 };
 
 /// A basic digital clock.
@@ -228,26 +225,19 @@ class _LandscapeClockState extends State<LandscapeClock>
         child: Stack(
           children: <Widget>[
             Positioned.fill(
-              child: Opacity(
-                // TODO: Maybe this depends on the landscape and adjust according to time?
-                opacity: 0.5,
-                child: Center(
-                  child: Text("$hour:$minute"),
-                ),
+              child: Center(
+                child: Text("$hour:$minute"),
               ),
             ),
             Positioned.fill(
-              child: Opacity(
-                opacity: 0.9,
-                child: Center(
-                  child: Text(
-                    "$hour:$minute",
-                    style: defaultStyle.copyWith(
-                        foreground: Paint()
-                          ..color = colors[_Element.shadow]
-                          ..style = PaintingStyle.stroke
-                          ..strokeWidth = 1),
-                  ),
+              child: Center(
+                child: Text(
+                  "$hour:$minute",
+                  style: defaultStyle.copyWith(
+                      foreground: Paint()
+                        ..color = colors[_Element.shadow]
+                        ..style = PaintingStyle.stroke
+                        ..strokeWidth = 1),
                 ),
               ),
             )
