@@ -14,6 +14,7 @@ import 'package:landscape_clock/fake_time_updater.dart';
 import 'model/DayPositions.dart';
 import 'model/Landscape.dart';
 import 'model/Star.dart';
+import 'model/WeatherLayer.dart';
 
 enum _Element {
   text,
@@ -127,14 +128,18 @@ class _LandscapeClockState extends State<LandscapeClock>
         _sunMoonPath.update(constraints);
       }
 
+      final weatherLayer =
+          getWeatherLayerForCondition(widget.model.weatherCondition);
+
       return Stack(children: <Widget>[
         _buildSkyBackground(),
         _buildStars(constraints),
         _buildSunMoon(constraints),
-        // TODO weather layer might need to be in front of landscape for
-        //      rain, storm, snow, ...?
-        _buildWeather(),
+        if (weatherLayer.position == WeatherLayerPosition.behindLandscape)
+          _buildWeather(weatherLayer),
         _buildLandscape(),
+        if (weatherLayer.position == WeatherLayerPosition.aboveLandscape)
+          _buildWeather(weatherLayer),
         _buildTime(),
         _buildBottomBar(),
       ]);
@@ -199,11 +204,11 @@ class _LandscapeClockState extends State<LandscapeClock>
     );
   }
 
-  Widget _buildWeather() {
+  Widget _buildWeather(WeatherLayer weatherLayer) {
     final darkeningPercentage = _dayPositions.getLandscapeDarkeningPercentage();
     return Positioned.fill(
       child: Image(
-        image: AssetImage('assets/landscape2/clouds.png'),
+        image: AssetImage('assets/${weatherLayer.asset}'),
         fit: BoxFit.cover,
         color: _getDarkenModulateColor(darkeningPercentage),
         colorBlendMode: BlendMode.modulate,
@@ -246,14 +251,15 @@ class _LandscapeClockState extends State<LandscapeClock>
       height: fontSize,
       child: Row(
         children: <Widget>[
-          Expanded(child: _buildText(widget.model.temperatureString, fontSize)),
           Expanded(
-              child:
-                  Center(child: _buildText(widget.model.location, fontSize))),
+            child: _buildText(widget.model.location, fontSize),
+          ),
           Expanded(
-              child: Align(
-                  alignment: Alignment.centerRight,
-                  child: _buildText(widget.model.weatherString, fontSize))),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: _buildText(widget.model.temperatureString, fontSize),
+            ),
+          ),
         ],
       ),
     );

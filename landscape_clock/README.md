@@ -13,13 +13,16 @@ to the time of day and as well the weather.
 ## Attribution
 Landscape images
 - landscape1: https://www.freepik.com/free-vector/desert-with-bright-sun-tall-cactuses_5323450.htm
-- landscape2: https://www.freepik.com/free-vector/mountains-with-bright-sun-flying-birds_5323463.htm#page=1&query=sun&position=37
+- landscape2: https://www.freepik.com/free-vector/mountains-with-bright-sun-flying-birds_5323463.htm
 
 Moon
-- https://www.freepik.com/free-vector/night-landscape-background-with-big-moon_1084495.htm#page=1&query=moon&position=0
+- https://www.freepik.com/free-vector/night-landscape-background-with-big-moon_1084495.htm
 
 Sun
 - self created
+
+Rain: https://www.freepik.com/free-vector/classic-monsoon-season-composition-with-realistic-design_2686584.htm
+Snow: https://www.freepik.com/free-vector/winter-season-landscape-with-christmas-tree-snow-vector-background_5908693.htm
 
 ## TODO
 

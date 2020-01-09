@@ -3,7 +3,7 @@ description: Landscape clock.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -29,6 +29,10 @@ flutter:
     - assets/landscape2/clouds.png
     - assets/sun.png
     - assets/moon.png
+    - assets/weather/rainy.png
+    - assets/weather/snowy.png
+    - assets/weather/sunny.png
+    - assets/weather/sunny2.png
   fonts:
     - family: ChangaOne-Regular
       fonts:
