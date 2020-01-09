@@ -22,6 +22,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/landscape1/
+    - assets/sun.png
+    - assets/moon.png
 #  fonts:
 #    - family: PressStart2P
 #      fonts:

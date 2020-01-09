@@ -4,13 +4,13 @@
 
 import 'dart:async';
 import 'dart:math' as Math;
+import 'dart:ui';
 
 import 'package:digital_clock/fake_time_updater.dart';
-import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_clock_helper/model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:tinycolor/tinycolor.dart';
 
 import 'model/DayPositions.dart';
 import 'model/Landscape.dart';
@@ -51,6 +51,7 @@ class _LandscapeClockState extends State<LandscapeClock>
     with SingleTickerProviderStateMixin {
   DateTime _dateTime = DateTime.now();
   DayPositions _dayPositions;
+  SunMoonPath _sunMoonPath = SunMoonPath();
   Timer _timer;
 
   FakeTimeUpdater _timeUpdater;
@@ -62,7 +63,7 @@ class _LandscapeClockState extends State<LandscapeClock>
 
     // TODO for publish, use _updateTime!
     //      as well remove SingleTickerProviderStateMixin
-    // _updateTime();
+//    _updateTime();
     _timeUpdater = FakeTimeUpdater(vsync: this);
     _timeUpdater.addListener(_updateTime);
     _timeUpdater.start();
@@ -96,6 +97,7 @@ class _LandscapeClockState extends State<LandscapeClock>
 
   void _updateTime() {
     setState(() {
+      _dateTime = DateTime.now();
       _dateTime = _timeUpdater.dateTime; // DateTime.now();
       _dayPositions = DayPositions(_dateTime);
       // Update once per minute. If you want to update every second, use the
@@ -117,38 +119,11 @@ class _LandscapeClockState extends State<LandscapeClock>
 
   @override
   Widget build(BuildContext context) {
-
-    final colors = Theme.of(context).brightness == Brightness.light
-        ? _lightTheme
-        : _darkTheme;
-    final hour =
-    DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
-    final minute = DateFormat('mm').format(_dateTime);
-    final fontSize = MediaQuery.of(context).size.width / 4;
-    final defaultStyle = GoogleFonts.skranji(
-      textStyle: TextStyle(
-        color: colors[_Element.text],
-      ),
-      fontWeight: FontWeight.bold,
-      fontSize: fontSize,
-    );
-
-    return DefaultTextStyle(
-      style: defaultStyle,
-      child: Stack(children: <Widget>[
-        Positioned.fill(
-          child: Image(
-            image: AssetImage('assets/landscape1/landscape1_background.png'),
-            fit: BoxFit.cover,
-            color: Colors.grey,
-            colorBlendMode: BlendMode.modulate,
-          ),
-        ),
-        Positioned.fill(
-          child: CustomPaint(
-            painter: SunPainter(_landscape, _dayPositions),
-          ),
-        ),
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      return Stack(children: <Widget>[
+        _buildSkyBackground(),
+        _buildSunMoon(constraints),
         Positioned.fill(
           child: Image(
             image: AssetImage('assets/${_landscape.landscape}'),
@@ -157,114 +132,134 @@ class _LandscapeClockState extends State<LandscapeClock>
             colorBlendMode: BlendMode.modulate,
           ),
         ),
-        Positioned.fill(
-          child: Opacity(
-            opacity: 0.5,
-            // TODO: Maybe this depends on the landscape and adjust according to time?
-            child: Center(
-              child: Text(
-                "$hour:$minute",
+        _buildTime(),
+      ]);
+    });
+  }
+
+  Widget _buildTime() {
+    final colors = Theme.of(context).brightness == Brightness.light
+        ? _lightTheme
+        : _darkTheme;
+    final hour =
+        DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
+    final minute = DateFormat('mm').format(_dateTime);
+    final fontSize = MediaQuery.of(context).size.width / 4;
+
+//    final defaultStyle = GoogleFonts.skranji( // nice looking but positions jump
+//    final defaultStyle = GoogleFonts.robotoCondensed( // positions = ok, but not so ncie
+//    final defaultStyle = GoogleFonts.titilliumWeb( // positions = ok, but not so ncie
+    final defaultStyle = GoogleFonts.changaOne(
+      textStyle: TextStyle(
+        color: colors[_Element.text],
+      ),
+//      fontWeight: FontWeight.bold,
+      fontSize: fontSize,
+    );
+
+    return Positioned.fill(
+      child: DefaultTextStyle(
+        style: defaultStyle,
+        child: Stack(
+          children: <Widget>[
+            Positioned.fill(
+              child: Opacity(
+                // TODO: Maybe this depends on the landscape and adjust according to time?
+                opacity: 0.5,
+                child: Center(
+                  child: Text("$hour:$minute"),
+                ),
               ),
             ),
-          ),
-        ),
-        Positioned.fill(
-          child: Opacity(
-            opacity: 0.9,
-            child: Center(
-              child: Text(
-                "$hour:$minute",
-                style: defaultStyle.copyWith(
-                    foreground: Paint()
-                      ..color = colors[_Element.shadow]
-                      ..style = PaintingStyle.stroke
-                      ..strokeWidth = 1),
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.9,
+                child: Center(
+                  child: Text(
+                    "$hour:$minute",
+                    style: defaultStyle.copyWith(
+                        foreground: Paint()
+                          ..color = colors[_Element.shadow]
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 1),
+                  ),
+                ),
               ),
-            ),
-          ),
+            )
+          ],
         ),
-      ]),
+      ),
     );
   }
+
+  Positioned _buildSkyBackground() {
+    final darkeningPercentage = _dayPositions.getSkyDarkeningPercentage();
+    return Positioned.fill(
+      child: Image(
+        image: AssetImage('assets/landscape1/landscape1_background.png'),
+        fit: BoxFit.cover,
+        color: _getDarkenModulateColor(darkeningPercentage),
+        colorBlendMode: BlendMode.modulate,
+      ),
+    );
+  }
+
+  Positioned _buildSunMoon(BoxConstraints constraints) {
+    _sunMoonPath.update(constraints);
+
+    final showSun = _dayPositions.isDaylight;
+    final sunMoonOffset = showSun
+        ? _sunMoonPath.getProgressOffset(_dayPositions.sunPosition)
+        : _sunMoonPath.getProgressOffset(_dayPositions.moonPosition);
+
+    // TODO first and last few percent (maybe like 2-3) fade the sun alpha
+
+    return Positioned(
+      child: Image.asset(
+        showSun ? "assets/sun.png" : "assets/moon.png",
+        height: _sunMoonPath.sunMoonSize,
+      ),
+      left: sunMoonOffset.dx,
+      top: sunMoonOffset.dy,
+    );
+  }
+
+  Color _getDarkenModulateColor(double darkeningPercentage) =>
+      Color.lerp(Colors.white, Colors.black, darkeningPercentage);
 }
 
+class SunMoonPath {
+  BoxConstraints _constraints;
+  PathMetric _pathMetrics;
+  double _sunMoonSize;
 
-class SunPainter extends CustomPainter {
-  Landscape landscape;
-  DayPositions dayPositions;
+  double get sunMoonSize => _sunMoonSize;
 
-  SunPainter(this.landscape, this.dayPositions);
+  void update(BoxConstraints constraints) {
+    if (_constraints == null ||
+        _constraints.maxWidth != constraints.maxWidth ||
+        _constraints.maxHeight != constraints.maxHeight) {
+      _constraints = constraints;
 
-  @override
-  void paint(Canvas canvas, Size size) {
-//    final rect = Rect.fromCircle(center: size.center(Offset(0, 0)), radius: 30.0);
-    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
+      _sunMoonSize =
+          Math.min(constraints.maxWidth, constraints.maxHeight) * 0.75;
 
-    final radius = 0.15;
-    final darkenFromPositionPercentage = 0.05;
-    final positionPercent = Curves.easeInOut
-        .transform(dayPositions.sunPosition); // 0.0 - 1.0 (0 = left, 1 = right)
+      final horizonHeight =
+          constraints.maxHeight - constraints.maxHeight * _landscape.horizon;
 
-    final sunSize = Math.min(size.width, size.height) * (radius * 2);
-    final sunPercentageHorizontal = sunSize / size.width;
-    final sunPercentageVertical = sunSize / size.height;
+      final path = Path();
+      path.moveTo(0, horizonHeight);
+      path.quadraticBezierTo(constraints.maxWidth / 2, -horizonHeight,
+          constraints.maxWidth, horizonHeight);
 
-    final horizontalPosition = rangePosition(sunPercentageHorizontal - 1,
-        1 - sunPercentageHorizontal, positionPercent);
-
-    final horizonPosition = -(2 * landscape.horizon - 1.0);
-    final verticalPosition = rangePosition(
-        sunPercentageVertical - 1,
-        horizonPosition + sunPercentageVertical,
-        ((Curves.slowMiddle.transform(positionPercent) - 0.5).abs() * 2));
-
-    final startEndDistance = 0.5 - (positionPercent - 0.5).abs();
-    final darkenPercentage = darkenFromPositionPercentage > 0 &&
-        startEndDistance < darkenFromPositionPercentage
-        ? Curves.easeIn
-        .transform(1 - startEndDistance / darkenFromPositionPercentage)
-        : 0.0;
-
-    final colorSky = darkenPercentage != 0
-        ? TinyColor(landscape.colorSkyDay)
-        .darken((darkenPercentage * 100).round())
-        .color
-        : landscape.colorSkyDay;
-
-    const colorSun = const Color(0xFFFFFF00);
-    var gradient = RadialGradient(
-      center: Alignment(horizontalPosition, verticalPosition),
-      radius: 1,
-      colors: [
-        colorSun, // yellow sun
-        Color.lerp(colorSun, Colors.transparent, 0.7),
-        Colors.transparent, // blue sky
-        Colors.transparent, // blue sky
-      ],
-      stops: [0.4 * radius, radius, /* sun on left */ 3 * radius, 1.0],
-    );
-    // rect is the area we are painting over
-    var paint = Paint()..shader = gradient.createShader(rect);
-    canvas.drawRect(rect, paint);
-
-//    canvas.drawLine(
-//        Offset(0.0, size.height - size.height * landscape.horizon),
-//        Offset(size.width, size.height - size.height * landscape.horizon),
-//        Paint()..color = Colors.black);
-//    canvas.drawLine(
-//        Offset(0.0, size.height * radius * 2),
-//        Offset(size.width, size.height * radius * 2),
-//        Paint()..color = Colors.black);
+      _pathMetrics = path.computeMetrics().first;
+    }
   }
 
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    // TODO this should depend on time, if it changed position or so..
-    return false;
-  }
-
-  double rangePosition(double start, double end, double percent) {
-    final rangeWidth = end - start;
-    return rangeWidth * percent + start;
+  Offset getProgressOffset(double progress) {
+    return _pathMetrics
+        .getTangentForOffset(progress * _pathMetrics.length)
+        .position
+        .translate(-_sunMoonSize / 2, -_sunMoonSize / 3);
   }
 }

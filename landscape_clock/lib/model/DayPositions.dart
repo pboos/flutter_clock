@@ -5,6 +5,9 @@ class DayPositions {
   static final sunrise = const TimeOfDay(hour: 6, minute: 0);
   static final sunset = const TimeOfDay(hour: 19, minute: 0);
 
+  static final darkenFromPositionPercentage = 0.7;
+  static final maxDarkenPercentage = 0.9;
+
   DateTime dateTime;
   TimeOfDay timeOfDay;
 
@@ -34,12 +37,34 @@ class DayPositions {
                     : totalDayMinutes - sunsetMinutes + dayMinutes)
                 .toDouble() /
             moonDuration
-    // TODO _isBefore(sunset, timeOfDay) is no correct, needs to be switching between middle of sunset and sunrise
+        // TODO _isBefore(sunset, timeOfDay) is not correct, needs to be switching between middle of sunset and sunrise
         : _isBefore(sunset, timeOfDay) ? 0.0 : 1.0;
   }
 
   int getDayMinutes(TimeOfDay timeOfDay) =>
       timeOfDay.hour * 60 + timeOfDay.minute;
+
+  double getSkyDarkeningPercentage() {
+    if (isNight) return maxDarkenPercentage;
+
+    final startEndDistance = (0.5 - (sunPosition - 0.5).abs()) * 2;
+    final centerDistance = 1 - startEndDistance;
+
+    if (centerDistance > darkenFromPositionPercentage) {
+      final darkenPercentage = (centerDistance - darkenFromPositionPercentage) *
+          (1 / (1-darkenFromPositionPercentage));
+
+      return darkenPercentage > maxDarkenPercentage
+          ? maxDarkenPercentage
+          : darkenPercentage;
+    } else {
+      return 0.0;
+    }
+  }
+
+  double getLandscapeDarkeningPercentage() {
+    return getSkyDarkeningPercentage() * 0.5;
+  }
 }
 
 double _toDouble(TimeOfDay time) => time.hour + time.minute / 60.0;
