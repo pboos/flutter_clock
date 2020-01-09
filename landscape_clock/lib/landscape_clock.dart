@@ -6,10 +6,10 @@ import 'dart:async';
 import 'dart:math' as Math;
 import 'dart:ui';
 
-import 'package:landscape_clock/fake_time_updater.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:intl/intl.dart';
+import 'package:landscape_clock/fake_time_updater.dart';
 
 import 'model/DayPositions.dart';
 import 'model/Landscape.dart';
@@ -133,6 +133,7 @@ class _LandscapeClockState extends State<LandscapeClock>
         _buildSunMoon(constraints),
         _buildLandscape(),
         _buildTime(),
+        _buildBottomBar(),
       ]);
     });
   }
@@ -200,7 +201,7 @@ class _LandscapeClockState extends State<LandscapeClock>
         ? _lightTheme
         : _darkTheme;
     final hour =
-    DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
+        DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
     final fontSize = MediaQuery.of(context).size.width / 4;
 
@@ -215,36 +216,57 @@ class _LandscapeClockState extends State<LandscapeClock>
 //      fontSize: fontSize,
 //    );
 
-    final defaultStyle = TextStyle(
-      fontFamily: "ChangaOne-Regular",
-      fontSize: fontSize,
-      color: colors[_Element.text],
-    );
-
     return Positioned.fill(
-      child: DefaultTextStyle(
-        style: defaultStyle,
-        child: Stack(
-          children: <Widget>[
-            Positioned.fill(
-              child: Center(
-                child: Text("$hour:$minute"),
-              ),
-            ),
-            Positioned.fill(
-              child: Center(
-                child: Text(
-                  "$hour:$minute",
-                  style: defaultStyle.copyWith(
-                      foreground: Paint()
-                        ..color = colors[_Element.shadow]
-                        ..style = PaintingStyle.stroke
-                        ..strokeWidth = 1),
-                ),
-              ),
-            )
-          ],
-        ),
+      child: Center(child: _buildText("$hour:$minute", fontSize)),
+    );
+  }
+
+  Widget _buildBottomBar() {
+    final padding = 8.0;
+    final fontSize = 20.0;
+    return Positioned(
+      left: padding,
+      right: padding,
+      bottom: padding,
+      height: fontSize,
+      child: Row(
+        children: <Widget>[
+          Expanded(child: _buildText(widget.model.temperatureString, fontSize)),
+          Expanded(
+              child:
+                  Center(child: _buildText(widget.model.location, fontSize))),
+          Expanded(
+              child: Align(
+                  alignment: Alignment.centerRight,
+                  child: _buildText(widget.model.weatherString, fontSize))),
+        ],
+      ),
+    );
+  }
+
+  DefaultTextStyle _buildText(String text, double fontSize) {
+    final colors = Theme.of(context).brightness == Brightness.light
+        ? _lightTheme
+        : _darkTheme;
+
+    return DefaultTextStyle(
+      style: TextStyle(
+        fontFamily: "ChangaOne-Regular",
+        fontSize: fontSize,
+        color: colors[_Element.text],
+      ),
+      child: Stack(
+        children: <Widget>[
+          Text(text),
+          Text(
+            text,
+            style: TextStyle(
+                foreground: Paint()
+                  ..color = colors[_Element.shadow]
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 1),
+          ),
+        ],
       ),
     );
   }
