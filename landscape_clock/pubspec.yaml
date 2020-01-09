@@ -21,7 +21,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/landscape1/
+    - assets/landscape1/background.png
+    - assets/landscape1/landscape.png
+    - assets/landscape1/clouds.png
     - assets/sun.png
     - assets/moon.png
   fonts:

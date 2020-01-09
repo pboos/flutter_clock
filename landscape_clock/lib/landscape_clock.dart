@@ -132,6 +132,7 @@ class _LandscapeClockState extends State<LandscapeClock>
         _buildStars(constraints),
         _buildSunMoon(constraints),
         _buildLandscape(),
+        _buildWeather(),
         _buildTime(),
         _buildBottomBar(),
       ]);
@@ -142,7 +143,7 @@ class _LandscapeClockState extends State<LandscapeClock>
     final darkeningPercentage = _dayPositions.getSkyDarkeningPercentage();
     return Positioned.fill(
       child: Image(
-        image: AssetImage('assets/landscape1/landscape1_background.png'),
+        image: AssetImage('assets/landscape1/background.png'),
         fit: BoxFit.cover,
         color: _getDarkenModulateColor(darkeningPercentage),
         colorBlendMode: BlendMode.modulate,
@@ -189,6 +190,18 @@ class _LandscapeClockState extends State<LandscapeClock>
     return Positioned.fill(
       child: Image(
         image: AssetImage('assets/${_landscape.landscape}'),
+        fit: BoxFit.cover,
+        color: _getDarkenModulateColor(darkeningPercentage),
+        colorBlendMode: BlendMode.modulate,
+      ),
+    );
+  }
+
+  Widget _buildWeather() {
+    final darkeningPercentage = _dayPositions.getLandscapeDarkeningPercentage();
+    return Positioned.fill(
+      child: Image(
+        image: AssetImage('assets/landscape1/clouds.png'),
         fit: BoxFit.cover,
         color: _getDarkenModulateColor(darkeningPercentage),
         colorBlendMode: BlendMode.modulate,
