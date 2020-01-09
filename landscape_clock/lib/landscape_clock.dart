@@ -6,7 +6,7 @@ import 'dart:async';
 import 'dart:math' as Math;
 import 'dart:ui';
 
-import 'package:digital_clock/fake_time_updater.dart';
+import 'package:landscape_clock/fake_time_updater.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,9 +33,6 @@ final _darkTheme = {
   _Element.shadow: Colors.white70,
 };
 
-/// A basic digital clock.
-///
-/// You can do better than this!
 class LandscapeClock extends StatefulWidget {
   const LandscapeClock(this.model);
 

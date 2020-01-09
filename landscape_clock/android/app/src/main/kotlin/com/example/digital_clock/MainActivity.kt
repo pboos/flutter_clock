@@ -1,4 +1,4 @@
-package com.example.digital_clock
+package ch.pboos.flutter.clock.landscape
 
 import android.os.Bundle
 import io.flutter.app.FlutterActivity
