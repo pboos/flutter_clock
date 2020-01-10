@@ -223,9 +223,6 @@ class _LandscapeClockState extends State<LandscapeClock> {
   }
 
   Widget _buildTime() {
-    final colors = Theme.of(context).brightness == Brightness.light
-        ? _lightTheme
-        : _darkTheme;
     final hour =
         DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh').format(_dateTime);
     final minute = DateFormat('mm').format(_dateTime);
@@ -248,8 +245,8 @@ class _LandscapeClockState extends State<LandscapeClock> {
   }
 
   Widget _buildBottomBar() {
-    final padding = 8.0;
-    final fontSize = 20.0;
+    final fontSize = MediaQuery.of(context).size.width / 35;
+    final padding = fontSize / 2.5;
     return Positioned(
       left: padding,
       right: padding,
