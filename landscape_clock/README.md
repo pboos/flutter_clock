@@ -25,21 +25,4 @@ Rain: https://www.freepik.com/free-vector/classic-monsoon-season-composition-wit
 Snow: https://www.freepik.com/free-vector/winter-season-landscape-with-christmas-tree-snow-vector-background_5908693.htm
 
 ## TODO
-
-- can use location, temperature, dark/light theme, ...
-  - widget.model.temperatureString
-
-- morph time (
-  - https://medium.com/flutter-community/paths-in-flutter-a-visual-guide-6c906464dcd0
-  - https://pub.dev/packages/path_morph
-- animate sun/moon
-- background in layers, so we can switch in clouds/stars/...
-- show/animate stars
-- sun and moon position correctly (probably hard)
-- darken/lighten background based on sun position (and moon position)
-  - https://medium.com/flutterpub/blend-it-like-anything-3fe67148f3f4
-- maybe even show the real weather? (will be harder)
-  - just as "overlay"
-  - not animated (or animation optional?)
-- adjust color of time
-- heaven as circular gradient?
+- sun and moon position correctly (would need more clearer location details)

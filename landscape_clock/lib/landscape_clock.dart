@@ -21,7 +21,7 @@ enum _Element {
   shadow,
 }
 
-final _landscape = Landscape2;
+final _landscape = Landscape1;
 
 final _lightTheme = {
   _Element.text: Colors.white54,
