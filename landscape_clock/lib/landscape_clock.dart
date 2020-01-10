@@ -9,7 +9,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:intl/intl.dart';
-import 'package:landscape_clock/fake_time_updater.dart';
+import 'package:landscape_clock/timelapse_updater.dart';
 
 import 'model/DayPositions.dart';
 import 'model/Landscape.dart';
@@ -21,6 +21,7 @@ enum _Element {
   shadow,
 }
 
+const enableTimeLapse = false;
 final _landscape = Landscape1;
 
 final _lightTheme = {
@@ -42,8 +43,7 @@ class LandscapeClock extends StatefulWidget {
   _LandscapeClockState createState() => _LandscapeClockState();
 }
 
-class _LandscapeClockState extends State<LandscapeClock>
-    with SingleTickerProviderStateMixin {
+class _LandscapeClockState extends State<LandscapeClock> {
   BoxConstraints _constraints;
 
   DateTime _dateTime = DateTime.now();
@@ -52,7 +52,7 @@ class _LandscapeClockState extends State<LandscapeClock>
   List<Star> _stars = List();
   Timer _timer;
 
-  FakeTimeUpdater _timeUpdater;
+  TimeLapseUpdater _timeUpdater;
 
   @override
   void initState() {
@@ -61,10 +61,13 @@ class _LandscapeClockState extends State<LandscapeClock>
 
     // TODO for publish, use _updateTime!
     //      as well remove SingleTickerProviderStateMixin
-//    _updateTime();
-    _timeUpdater = FakeTimeUpdater(vsync: this);
-    _timeUpdater.addListener(_updateTime);
-    _timeUpdater.start();
+    if (enableTimeLapse) {
+      _timeUpdater = TimeLapseUpdater();
+      _timeUpdater.addListener(_updateTime);
+      _timeUpdater.start();
+    } else {
+      _updateTime();
+    }
 
     _updateModel();
   }
@@ -95,9 +98,12 @@ class _LandscapeClockState extends State<LandscapeClock>
 
   void _updateTime() {
     setState(() {
-      _dateTime = DateTime.now();
-      _dateTime = _timeUpdater.dateTime; // DateTime.now();
-//      _dateTime = DateTime(2020, 1, 1, 4, 10, 0, 0, 0);
+      if (enableTimeLapse) {
+        _dateTime = _timeUpdater.dateTime; // DateTime.now();
+      } else {
+        _dateTime = DateTime.now();
+//        _dateTime = DateTime(2020, 1, 1, 4, 10, 0, 0, 0);
+      }
       _dayPositions = DayPositions(_dateTime);
       // Update once per minute. If you want to update every second, use the
       // following code.
