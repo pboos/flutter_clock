@@ -14,11 +14,11 @@ enum WeatherLayerPosition {
 }
 
 const WeatherLayers = const {
-//  WeatherCondition.cloudy: WeatherLayer(
-//    WeatherCondition.cloudy,
-//    "weather/cloudy.png",
-//    WeatherLayerPosition.aboveLandscape,
-//  ),
+  WeatherCondition.cloudy: WeatherLayer(
+    WeatherCondition.cloudy,
+    "weather/cloudy.png",
+    WeatherLayerPosition.aboveLandscape,
+  ),
 //  WeatherCondition.foggy: WeatherLayer(
 //    WeatherCondition.foggy,
 //    "weather/foggy.png",
@@ -36,7 +36,7 @@ const WeatherLayers = const {
   ),
   WeatherCondition.sunny: WeatherLayer(
     WeatherCondition.sunny,
-    "weather/sunny.png", // sunny2.png
+    "weather/sunny.png",
     WeatherLayerPosition.behindLandscape,
   ),
 //  WeatherCondition.thunderstorm: WeatherLayer(

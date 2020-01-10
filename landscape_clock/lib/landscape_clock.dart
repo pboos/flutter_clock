@@ -154,14 +154,35 @@ class _LandscapeClockState extends State<LandscapeClock> {
 
   Positioned _buildSkyBackground() {
     final darkeningPercentage = _dayPositions.getSkyDarkeningPercentage();
-    return Positioned.fill(
-      child: Image(
-        image: AssetImage('assets/${_landscape.background}'),
-        fit: BoxFit.cover,
-        color: _getDarkenModulateColor(darkeningPercentage),
-        colorBlendMode: BlendMode.modulate,
-      ),
-    );
+    final background = _landscape.background;
+
+    if (background is ImageLandscapeBackground) {
+      return Positioned.fill(
+        child: Image(
+          image: AssetImage('assets/${background.asset}'),
+          fit: BoxFit.cover,
+          color: _getDarkenModulateColor(darkeningPercentage),
+          colorBlendMode: BlendMode.modulate,
+        ),
+      );
+    } else if (background is GradientLandscapeBackground) {
+      return Positioned.fill(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color.lerp(
+                    background.colorTop, Colors.black, darkeningPercentage),
+                Color.lerp(
+                    background.colorBottom, Colors.black, darkeningPercentage),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildStars(BoxConstraints constraints) {
