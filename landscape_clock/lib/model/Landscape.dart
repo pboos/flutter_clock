@@ -1,9 +1,13 @@
+// Copyright 2020 Patrick Boos. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/widgets.dart';
 
 class Landscape {
   final String landscape;
   final LandscapeBackground background;
-  final double horizon; // 0.5 = 50%% from bottom
+  final double horizon; // 0.3 = 30%% from bottom
 
   const Landscape({
     @required this.landscape,
@@ -12,23 +16,14 @@ class Landscape {
   });
 }
 
+
 const Landscape1 = const Landscape(
-  landscape: "landscape1/landscape.png",
+  landscape: "landscape/landscape.png",
   background: GradientLandscapeBackground(
-    colorTop: Color(0xFF8FC3EC),
+    colorTop: Color(0xFF9DCFFF), // blue
     colorBottom: Color(0xFFFFFFFF),
   ),
   horizon: 0.3,
-);
-const Landscape2 = const Landscape(
-  landscape: "landscape2/landscape.png",
-  background: ImageLandscapeBackground("landscape2/background.png"),
-  horizon: 0.25,
-);
-const Landscape3 = const Landscape(
-  landscape: "landscape3/landscape.png",
-  background: ImageLandscapeBackground("landscape3/background.png"),
-  horizon: 0.5,
 );
 
 ///////////////////////////////////////////

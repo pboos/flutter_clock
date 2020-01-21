@@ -1,3 +1,7 @@
+// Copyright 2020 Patrick Boos. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 
 class DayPositions {
@@ -63,7 +67,7 @@ class DayPositions {
   }
 
   double getLandscapeDarkeningPercentage() {
-    return getSkyDarkeningPercentage() * 0.5;
+    return getSkyDarkeningPercentage() * 0.7;
   }
 }
 

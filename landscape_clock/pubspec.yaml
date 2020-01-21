@@ -21,13 +21,16 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/landscape1/landscape.png
+    - assets/landscape/landscape.png
     - assets/sun.png
     - assets/moon.png
     - assets/weather/cloudy.png
+    - assets/weather/foggy.png
     - assets/weather/rainy.png
     - assets/weather/snowy.png
     - assets/weather/sunny.png
+    - assets/weather/thunderstorm.png
+    - assets/weather/windy.png
   fonts:
     - family: ChangaOne-Regular
       fonts:

@@ -1,3 +1,7 @@
+// Copyright 2020 Patrick Boos. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter_clock_helper/model.dart';
 
 class WeatherLayer {
@@ -19,11 +23,11 @@ const WeatherLayers = const {
     "weather/cloudy.png",
     WeatherLayerPosition.aboveLandscape,
   ),
-//  WeatherCondition.foggy: WeatherLayer(
-//    WeatherCondition.foggy,
-//    "weather/foggy.png",
-//    WeatherLayerPosition.aboveLandscape,
-//  ),
+  WeatherCondition.foggy: WeatherLayer(
+    WeatherCondition.foggy,
+    "weather/foggy.png",
+    WeatherLayerPosition.aboveLandscape,
+  ),
   WeatherCondition.rainy: WeatherLayer(
     WeatherCondition.rainy,
     "weather/rainy.png",
@@ -39,16 +43,16 @@ const WeatherLayers = const {
     "weather/sunny.png",
     WeatherLayerPosition.behindLandscape,
   ),
-//  WeatherCondition.thunderstorm: WeatherLayer(
-//    WeatherCondition.thunderstorm,
-//    "weather/thunderstorm.png",
-//    WeatherLayerPosition.aboveLandscape,
-//  ),
-//  WeatherCondition.windy: WeatherLayer(
-//    WeatherCondition.windy,
-//    "weather/windy.png",
-//    WeatherLayerPosition.aboveLandscape,
-//  ),
+  WeatherCondition.thunderstorm: WeatherLayer(
+    WeatherCondition.thunderstorm,
+    "weather/thunderstorm.png",
+    WeatherLayerPosition.aboveLandscape,
+  ),
+  WeatherCondition.windy: WeatherLayer(
+    WeatherCondition.windy,
+    "weather/windy.png",
+    WeatherLayerPosition.aboveLandscape,
+  ),
 };
 
 WeatherLayer getWeatherLayerForCondition(WeatherCondition condition) {
