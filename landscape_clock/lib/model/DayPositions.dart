@@ -56,7 +56,7 @@ class DayPositions {
 
     if (centerDistance > darkenFromPositionPercentage) {
       final darkenPercentage = (centerDistance - darkenFromPositionPercentage) *
-          (1 / (1-darkenFromPositionPercentage));
+          (1 / (1 - darkenFromPositionPercentage));
 
       return darkenPercentage > maxDarkenPercentage
           ? maxDarkenPercentage

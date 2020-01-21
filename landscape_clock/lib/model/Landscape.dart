@@ -16,7 +16,6 @@ class Landscape {
   });
 }
 
-
 const Landscape1 = const Landscape(
   landscape: "landscape/landscape.png",
   background: GradientLandscapeBackground(
